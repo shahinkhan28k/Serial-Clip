@@ -30,7 +30,7 @@ Desired Styles: {{#each styles}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}
 Analyze the following video:
 {{media url=videoDataUri}}
 
-Return an array of clip metadata with start times, end times, and a catchy title for each.`,
+Return an array of clip metadata with start times, end times, and a catchy title for each. Make sure to provide a unique id for each clip.`,
 });
 
 const generateVideoClipsFlow = ai.defineFlow(

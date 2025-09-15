@@ -48,8 +48,8 @@ export default function Home() {
       // Clear previous results
       setSuggestedStyles([]);
       setSelectedStyles(new Set());
-      setGeneratedClips([]);
       await clearClips();
+      setGeneratedClips([]);
       
       setIsSuggesting(true);
       try {
@@ -95,6 +95,7 @@ export default function Home() {
     }
     setIsGenerating(true);
     await clearClips();
+    setGeneratedClips([]);
     
     try {
        const reader = new FileReader();
@@ -111,12 +112,15 @@ export default function Home() {
               toast({ variant: "destructive", title: "Clip Generation Error", description: error });
           } else if (clips && clips.length > 0) {
               for (const clip of clips) {
+                  // The AI returns a unique ID, but we can also use a timestamp for robustness
+                  const clipId = clip.id || Date.now().toString();
                   const newClip: Clip = {
-                      id: clip.id,
+                      id: clipId,
                       title: clip.title,
-                      // In a real app, this would be a URL to the sliced clip
+                      // In a real app, this would be a URL to the sliced clip based on startTime/endTime
+                      // For now, we use the full video URL
                       videoUrl: videoUrl!, 
-                      thumbnailUrl: `https://picsum.photos/seed/${clip.id}/400/711`,
+                      thumbnailUrl: `https://picsum.photos/seed/${clipId}/400/711`,
                       dataAiHint: 'video clip',
                       captions: '',
                       speed: parseFloat(videoSpeed),
