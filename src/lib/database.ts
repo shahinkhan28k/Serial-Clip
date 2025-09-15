@@ -1,4 +1,4 @@
-import { ref, set, onValue, off } from 'firebase/database';
+import { ref, set, onValue, off, remove } from 'firebase/database';
 import { db } from './firebase';
 import type { Clip } from './types';
 
@@ -35,4 +35,19 @@ export function onClipsValue(callback: (clips: Clip[]) => void): () => void {
 
   // Return an unsubscribe function
   return () => off(clipsRef, 'value', listener);
+}
+
+// Function to clear all clips
+export async function clearClips(): Promise<void> {
+  if (!db) {
+    console.warn("Firebase not initialized, skipping clearClips.");
+    return;
+  }
+  try {
+    const clipsRef = ref(db, 'clips/');
+    await remove(clipsRef);
+  } catch (error) {
+    console.error("Error clearing clips from database: ", error);
+    throw error;
+  }
 }

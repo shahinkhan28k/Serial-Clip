@@ -7,8 +7,8 @@ import { Header } from '@/components/clipcraft/header';
 import { SettingsPanel } from '@/components/clipcraft/settings-panel';
 import { PreviewPanel } from '@/components/clipcraft/preview-panel';
 import type { AspectRatio, Clip, SocialPlatform } from '@/lib/types';
-import { getStyleSuggestions, getCaptionsForClip } from '@/app/actions';
-import { onClipsValue, writeClip } from '@/lib/database';
+import { getStyleSuggestions, getCaptionsForClip, getClips } from '@/app/actions';
+import { onClipsValue, writeClip, clearClips } from '@/lib/database';
 
 export default function Home() {
   const { toast } = useToast();
@@ -44,9 +44,12 @@ export default function Home() {
       setVideoFile(file);
       const url = URL.createObjectURL(file);
       setVideoUrl(url);
-      setGeneratedClips([]);
+      
+      // Clear previous results
       setSuggestedStyles([]);
       setSelectedStyles(new Set());
+      setGeneratedClips([]);
+      await clearClips();
       
       setIsSuggesting(true);
       try {
@@ -91,24 +94,47 @@ export default function Home() {
       return;
     }
     setIsGenerating(true);
+    await clearClips();
     
     try {
-      // In a real scenario, you would generate a unique clip and upload it to storage.
-      // For now, we'll create a new placeholder clip entry in the database.
-      const newClip: Clip = {
-        id: `clip-${Date.now()}`,
-        thumbnailUrl: `https://picsum.photos/seed/${Date.now()}/400/711`,
-        dataAiHint: 'new clip',
-        captions: '',
-        speed: parseFloat(videoSpeed),
-      };
+       const reader = new FileReader();
+       reader.readAsDataURL(videoFile);
+       reader.onload = async () => {
+          const base64 = reader.result as string;
+          const { clips, error } = await getClips({
+              videoDataUri: base64,
+              clipLength,
+              styles: Array.from(selectedStyles)
+          });
 
-      await writeClip(newClip);
-      
-      toast({ title: "Success!", description: `1 new clip has been generated and saved.` });
+          if (error) {
+              toast({ variant: "destructive", title: "Clip Generation Error", description: error });
+          } else if (clips && clips.length > 0) {
+              for (const clip of clips) {
+                  const newClip: Clip = {
+                      id: clip.id,
+                      title: clip.title,
+                      // In a real app, this would be a URL to the sliced clip
+                      videoUrl: videoUrl!, 
+                      thumbnailUrl: `https://picsum.photos/seed/${clip.id}/400/711`,
+                      dataAiHint: 'video clip',
+                      captions: '',
+                      speed: parseFloat(videoSpeed),
+                  };
+                  await writeClip(newClip);
+              }
+              toast({ title: "Success!", description: `${clips.length} new clips have been generated.` });
+          } else {
+              toast({ title: "No Clips Generated", description: "The AI could not find any suitable clips based on your settings." });
+          }
+           setIsGenerating(false);
+       };
+       reader.onerror = () => {
+          toast({ variant: "destructive", title: "Error", description: "Failed to read the file for clip generation." });
+          setIsGenerating(false);
+       }
     } catch (error) {
-      toast({ variant: "destructive", title: "Error", description: "Failed to generate and save clip." });
-    } finally {
+      toast({ variant: "destructive", title: "Error", description: "An unexpected error occurred while generating clips." });
       setIsGenerating(false);
     }
   };

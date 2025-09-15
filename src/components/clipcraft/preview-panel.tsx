@@ -17,6 +17,17 @@ type PreviewPanelProps = {
 };
 
 export function PreviewPanel({ videoUrl, aspectRatio, generatedClips, onGenerateCaptions, isCaptioning }: PreviewPanelProps) {
+  
+  const handleDownload = (clip: Clip) => {
+    if (!clip.videoUrl) return;
+    const a = document.createElement('a');
+    a.href = clip.videoUrl;
+    a.download = `${clip.title.replace(/\s+/g, '_') || clip.id}.mp4`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 h-full">
       <div className="flex flex-col items-center justify-center bg-card rounded-lg p-4 lg:p-6 border border-dashed">
@@ -66,7 +77,7 @@ export function PreviewPanel({ videoUrl, aspectRatio, generatedClips, onGenerate
                       />
                       <div className="flex-1 space-y-2">
                         <div className="flex justify-between items-center">
-                            <h3 className="font-semibold text-sm">Clip #{clip.id}</h3>
+                            <h3 className="font-semibold text-sm">{clip.title || `Clip #${clip.id}`}</h3>
                             <div className="flex items-center text-xs text-muted-foreground bg-secondary/80 px-2 py-0.5 rounded-full">
                                 <Forward className="h-3 w-3 mr-1" />
                                 <span>{clip.speed}x</span>
@@ -93,7 +104,7 @@ export function PreviewPanel({ videoUrl, aspectRatio, generatedClips, onGenerate
                             )}
                             Captions
                           </Button>
-                          <Button size="sm" className="flex-1">
+                          <Button size="sm" className="flex-1" onClick={() => handleDownload(clip)}>
                             <Download className="mr-2 h-4 w-4" />
                             Download
                           </Button>
