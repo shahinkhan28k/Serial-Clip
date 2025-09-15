@@ -1,3 +1,28 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "clip1",
+      "description": "A dynamic shot of a person hiking up a mountain trail.",
+      "imageUrl": "https://picsum.photos/seed/clip1/400/711",
+      "imageHint": "mountain hiking"
+    },
+    {
+      "id": "clip2",
+      "description": "A close-up of a chef meticulously plating a gourmet dish.",
+      "imageUrl": "https://picsum.photos/seed/clip2/400/711",
+      "imageHint": "gourmet food"
+    },
+    {
+      "id": "clip3",
+      "description": "An aerial view of a bustling city at night with vibrant lights.",
+      "imageUrl": "https://picsum.photos/seed/clip3/400/711",
+      "imageHint": "city night"
+    },
+    {
+      "id": "clip4",
+      "description": "A playful puppy chasing a ball in a sunny park.",
+      "imageUrl": "https://picsum.photos/seed/clip4/400/711",
+      "imageHint": "puppy playing"
+    }
+  ]
 }
