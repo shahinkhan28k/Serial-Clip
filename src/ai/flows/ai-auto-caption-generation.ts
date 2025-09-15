@@ -42,7 +42,7 @@ Captions:`,
 
 const generateCaptionsFlow = ai.defineFlow(
   {
-    name: 'generateCaptionsFlow',
+    name: 'generateCaptionsFlow-clipcraft-v1',
     inputSchema: GenerateCaptionsInputSchema,
     outputSchema: GenerateCaptionsOutputSchema,
   },

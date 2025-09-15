@@ -47,7 +47,7 @@ Return an array of suggested styles.`,
 
 const suggestClipStylesFlow = ai.defineFlow(
   {
-    name: 'suggestClipStylesFlow',
+    name: 'suggestClipStylesFlow-clipcraft-v1',
     inputSchema: SuggestClipStylesInputSchema,
     outputSchema: SuggestClipStylesOutputSchema,
   },
