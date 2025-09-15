@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { ChangeEvent } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { Header } from '@/components/clipcraft/header';
@@ -8,7 +8,7 @@ import { SettingsPanel } from '@/components/clipcraft/settings-panel';
 import { PreviewPanel } from '@/components/clipcraft/preview-panel';
 import type { AspectRatio, Clip, SocialPlatform } from '@/lib/types';
 import { getStyleSuggestions, getCaptionsForClip } from '@/app/actions';
-import { placeholderClips } from '@/lib/placeholder-data';
+import { onClipsValue, writeClip } from '@/lib/database';
 
 export default function Home() {
   const { toast } = useToast();
@@ -28,6 +28,14 @@ export default function Home() {
   const [isSuggesting, setIsSuggesting] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isCaptioning, setIsCaptioning] = useState<string | null>(null);
+
+  useEffect(() => {
+    const unsubscribe = onClipsValue((clips) => {
+      setGeneratedClips(clips);
+    });
+    return () => unsubscribe();
+  }, []);
+
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -76,22 +84,38 @@ export default function Home() {
     });
   };
 
-  const handleGenerateClips = () => {
+  const handleGenerateClips = async () => {
     if (!videoFile) {
       toast({ variant: "destructive", title: "No video selected", description: "Please upload a video to generate clips." });
       return;
     }
     setIsGenerating(true);
-    // Simulate AI processing
-    setTimeout(() => {
-      setGeneratedClips(placeholderClips);
+    
+    try {
+      // In a real scenario, you would generate a unique clip and upload it to storage.
+      // For now, we'll create a new placeholder clip entry in the database.
+      const newClip: Clip = {
+        id: `clip-${Date.now()}`,
+        thumbnailUrl: `https://picsum.photos/seed/${Date.now()}/400/711`,
+        dataAiHint: 'new clip',
+        captions: '',
+      };
+
+      await writeClip(newClip);
+      
+      toast({ title: "Success!", description: `1 new clip has been generated and saved.` });
+    } catch (error) {
+      toast({ variant: "destructive", title: "Error", description: "Failed to generate and save clip." });
+    } finally {
       setIsGenerating(false);
-      toast({ title: "Success!", description: `${placeholderClips.length} clips have been generated.` });
-    }, 2000);
+    }
   };
 
   const handleGenerateCaptions = async (clipId: string) => {
       if (!videoFile) return;
+      
+      const clipToUpdate = generatedClips.find(c => c.id === clipId);
+      if (!clipToUpdate) return;
       
       setIsCaptioning(clipId);
        try {
@@ -104,10 +128,9 @@ export default function Home() {
             if (error) {
                 toast({ variant: "destructive", title: "Captioning Error", description: error });
             } else if (captions) {
-                setGeneratedClips(prev => prev.map(clip => 
-                    clip.id === clipId ? { ...clip, captions } : clip
-                ));
-                 toast({ title: "Captions Generated", description: "Captions have been added to the clip." });
+                const updatedClip = { ...clipToUpdate, captions };
+                await writeClip(updatedClip);
+                toast({ title: "Captions Generated", description: "Captions have been added and saved." });
             }
             setIsCaptioning(null);
         }
