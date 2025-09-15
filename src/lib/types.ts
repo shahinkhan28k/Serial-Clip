@@ -6,4 +6,5 @@ export interface Clip {
   thumbnailUrl: string;
   dataAiHint: string;
   captions: string;
+  speed: number;
 }

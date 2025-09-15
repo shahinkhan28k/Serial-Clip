@@ -19,6 +19,7 @@ export default function Home() {
   const [aspectRatio, setAspectRatio] = useState<AspectRatio>('9:16');
   const [clipLength, setClipLength] = useState<string>('15');
   const [analysisLevel, setAnalysisLevel] = useState<number[]>([50]);
+  const [videoSpeed, setVideoSpeed] = useState<string>('1');
   
   const [suggestedStyles, setSuggestedStyles] = useState<string[]>([]);
   const [selectedStyles, setSelectedStyles] = useState<Set<string>>(new Set());
@@ -99,6 +100,7 @@ export default function Home() {
         thumbnailUrl: `https://picsum.photos/seed/${Date.now()}/400/711`,
         dataAiHint: 'new clip',
         captions: '',
+        speed: parseFloat(videoSpeed),
       };
 
       await writeClip(newClip);
@@ -159,6 +161,8 @@ export default function Home() {
               setAspectRatio={setAspectRatio}
               clipLength={clipLength}
               setClipLength={setClipLength}
+              videoSpeed={videoSpeed}
+              setVideoSpeed={setVideoSpeed}
               analysisLevel={analysisLevel}
               setAnalysisLevel={setAnalysisLevel}
               suggestedStyles={suggestedStyles}

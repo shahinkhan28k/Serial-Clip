@@ -1,7 +1,7 @@
 'use client';
 
 import type { Dispatch, SetStateAction, ChangeEvent } from 'react';
-import { Facebook, Instagram, Youtube, Upload, Wand2, Loader2, Film } from 'lucide-react';
+import { Facebook, Instagram, Youtube, Upload, Wand2, Loader2, Film, Forward } from 'lucide-react';
 import { TikTokIcon } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -26,6 +26,8 @@ type SettingsPanelProps = {
   setAspectRatio: Dispatch<SetStateAction<AspectRatio>>;
   clipLength: string;
   setClipLength: Dispatch<SetStateAction<string>>;
+  videoSpeed: string;
+  setVideoSpeed: Dispatch<SetStateAction<string>>;
   analysisLevel: number[];
   setAnalysisLevel: Dispatch<SetStateAction<number[]>>;
   suggestedStyles: string[];
@@ -44,6 +46,8 @@ export function SettingsPanel({
   setAspectRatio,
   clipLength,
   setClipLength,
+  videoSpeed,
+  setVideoSpeed,
   analysisLevel,
   setAnalysisLevel,
   suggestedStyles,
@@ -103,25 +107,42 @@ export function SettingsPanel({
           </RadioGroup>
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="clip-length">3. Clip Length</Label>
-          <Select value={clipLength} onValueChange={setClipLength}>
-            <SelectTrigger id="clip-length">
-              <SelectValue placeholder="Select length" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="5">5 seconds</SelectItem>
-              <SelectItem value="10">10 seconds</SelectItem>
-              <SelectItem value="15">15 seconds</SelectItem>
-              <SelectItem value="20">20 seconds</SelectItem>
-              <SelectItem value="30">30 seconds</SelectItem>
-              <SelectItem value="60">1 minute</SelectItem>
-            </SelectContent>
-          </Select>
+        <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+                <Label htmlFor="clip-length">3. Clip Length</Label>
+                <Select value={clipLength} onValueChange={setClipLength}>
+                    <SelectTrigger id="clip-length">
+                    <SelectValue placeholder="Select length" />
+                    </SelectTrigger>
+                    <SelectContent>
+                    <SelectItem value="5">5 seconds</SelectItem>
+                    <SelectItem value="10">10 seconds</SelectItem>
+                    <SelectItem value="15">15 seconds</SelectItem>
+                    <SelectItem value="20">20 seconds</SelectItem>
+                    <SelectItem value="30">30 seconds</SelectItem>
+                    <SelectItem value="60">1 minute</SelectItem>
+                    </SelectContent>
+                </Select>
+            </div>
+            <div className="space-y-2">
+                <Label htmlFor="video-speed">4. Speed</Label>
+                <Select value={videoSpeed} onValueChange={setVideoSpeed}>
+                    <SelectTrigger id="video-speed">
+                        <SelectValue placeholder="Select speed" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="0.5">0.5x</SelectItem>
+                        <SelectItem value="1">1x (Normal)</SelectItem>
+                        <SelectItem value="1.25">1.25x</SelectItem>
+                        <SelectItem value="1.5">1.5x</SelectItem>
+                        <SelectItem value="2">2x</SelectItem>
+                    </SelectContent>
+                </Select>
+            </div>
         </div>
         
         <div className="space-y-2">
-          <Label>4. AI Style Suggestions</Label>
+          <Label>5. AI Style Suggestions</Label>
             {isSuggesting ? (
               <div className="flex items-center text-sm text-muted-foreground">
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -148,7 +169,7 @@ export function SettingsPanel({
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="analysis-level">5. Analysis Sensitivity</Label>
+          <Label htmlFor="analysis-level">6. Analysis Sensitivity</Label>
           <Slider 
             id="analysis-level"
             defaultValue={[50]} 

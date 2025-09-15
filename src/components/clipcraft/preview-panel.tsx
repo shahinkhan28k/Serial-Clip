@@ -1,5 +1,5 @@
 'use client';
-import { Download, VenetianMask, FileText, Loader2 } from 'lucide-react';
+import { Download, VenetianMask, FileText, Loader2, Forward } from 'lucide-react';
 import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -65,7 +65,13 @@ export function PreviewPanel({ videoUrl, aspectRatio, generatedClips, onGenerate
                         data-ai-hint={clip.dataAiHint}
                       />
                       <div className="flex-1 space-y-2">
-                        <h3 className="font-semibold text-sm">Clip #{clip.id}</h3>
+                        <div className="flex justify-between items-center">
+                            <h3 className="font-semibold text-sm">Clip #{clip.id}</h3>
+                            <div className="flex items-center text-xs text-muted-foreground bg-secondary/80 px-2 py-0.5 rounded-full">
+                                <Forward className="h-3 w-3 mr-1" />
+                                <span>{clip.speed}x</span>
+                            </div>
+                        </div>
                         <Textarea 
                             readOnly
                             value={clip.captions || "No captions generated yet."} 
