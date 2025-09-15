@@ -40,17 +40,7 @@ const generateVideoClipsFlow = ai.defineFlow(
     outputSchema: GenerateVideoClipsOutputSchema,
   },
   async (input) => {
-    // In a real implementation, this flow would use a tool to actually slice the video
-    // based on the LLM's response and return the video data for each clip.
-    // For this prototype, we'll return mock data based on what the LLM *would* suggest.
-    console.log('Generating clips for video with styles:', input.styles);
-    
-    // Stubbed response for prototyping
-    const stubbedClips = [
-        { id: `clip-${Date.now()}-1`, startTime: 0, endTime: 10, title: "Getting Started" },
-        { id: `clip-${Date.now()}-2`, startTime: 15, endTime: 25, title: "The Big Reveal" }
-    ];
-
-    return { clips: stubbedClips };
+    const { output } = await prompt(input);
+    return output!;
   }
 );
